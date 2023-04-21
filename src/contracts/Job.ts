@@ -52,7 +52,9 @@ export default class Experience extends BaseInterface {
 
         if (!job) {
             console.log("ERROR get job");
-            return {};
+            return {
+                status: 0
+            };
         }
 
         const updateTx = await this._contract.updateJob(

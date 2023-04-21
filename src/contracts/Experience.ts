@@ -8,7 +8,7 @@ export type ExperienceProps = {
     start?: number,
     finish?: number,
     companyId?: number,
-    userAddress: string
+    userAddress?: string
 }
 
 export default class Experience extends BaseInterface {
@@ -44,7 +44,9 @@ export default class Experience extends BaseInterface {
 
         if (!exp) {
             console.log("ERROR get exp");
-            return {};
+            return {
+                status: 0
+            };
         }
 
         const updateTx = await this._contract.updateExperience(userAddress,

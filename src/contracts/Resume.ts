@@ -42,7 +42,9 @@ export default class Experience extends BaseInterface {
 
         if (!resume) {
             console.log("ERROR get resume");
-            return {};
+            return {
+                status: -1
+            };
         }
 
         const updateTx = await this._contract.updateResume(

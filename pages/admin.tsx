@@ -2,18 +2,20 @@ import React from "react"
 import { Web3Context } from '@/src/context/Web3Context';
 import UserContract, { UserProps } from "@/src/contracts/User";
 import CompanyContract, { CompanyProps } from "@/src/contracts/Company";
+import SkillContract, { SkillProps } from "@/src/contracts/Skill";
 
 export default function Admin() {
     const { provider } = React.useContext(Web3Context);
     const [user, setUser] = React.useState<UserProps>({ userAddress: "", type: -1 });
     const [company, setCompany] = React.useState<CompanyProps>({ id: -1 });
+    const [skill, setSkill] = React.useState<SkillProps>({ id: -1 });
 
 
     const handleAddUser = async () => {
         try {
             console.log("...handling user contract");
 
-            if (!provider || user.userAddress == "" || user.type == -1) {
+            if (!provider || user.userAddress === "" || user.type === -1) {
                 console.log("Cut");
                 console.log("handle user contract done");
                 return;
@@ -41,7 +43,7 @@ export default function Admin() {
     const handleCompany = async (action: number) => {
         try {
             console.log("...handling company contract");
-            if (!provider || company.id == -1 || company.name == "") {
+            if (!provider || company.id === -1 || company.name === "") {
                 console.log("Cut");
                 console.log("handle company contract done");
                 return;
@@ -81,10 +83,48 @@ export default function Admin() {
         }
     }
 
+    const handleSkill = async (action: number) => {
+        try {
+            console.log("...handling skill contract");
+            if (!provider || skill.id === -1 || skill.name === "" || !skill) {
+                console.log("Cut");
+                console.log("handle company contract done");
+                return;
+            }
+            let result;
+            const skillContract = new SkillContract(provider);
+            switch (action) {
+                case 0:
+                    result = await skillContract.addSkill(skill);
+                    break;
+                case 1:
+                    result = await skillContract.deleteSkill(skill.id);
+                    break;
+                default:
+                    break;
+            }
+
+            console.log(result);
+            console.log("handle company contract done");
+
+            if (!result) {
+                throw new Error("Not have result");
+            }
+            if (result.status == 1) {
+                alert("Success transaction");
+            } else {
+                alert("Failed transaction");
+            }
+        } catch (error) {
+            console.log("handle company contract done");
+            console.log(error);
+        }
+    }
+
     return (
         <>
             <div>
-                <label>Add User</label>
+                <label>User</label>
                 <div>
                     <label>Input User Address: </label>
                     <input type="text" className="bg-gray-300 w-50" onChange={(e) => setUser({ ...user, userAddress: e.target.value })} />
@@ -121,6 +161,20 @@ export default function Admin() {
                 <button className="bg-blue-500 hover:bg-blue-700 text-white  py-1 m-2 px-4 rounded-full" onClick={() => handleCompany(0)}>Add</button>
                 <button className="bg-green-500 hover:bg-green-700 text-white  py-1 m-2 px-4 rounded-full" onClick={() => handleCompany(1)}>Update</button>
                 <button className="bg-red-500 hover:bg-red-700 text-white  py-1 m-2 px-4 rounded-full" onClick={() => handleCompany(2)}>Delete</button>
+            </div>
+
+            <div>
+                <label>Skill</label>
+                <div>
+                    <label>Input Id: </label>
+                    <input type="number" className="bg-gray-300 w-50" onChange={(e) => setSkill({ ...skill, id: Number(e.target.value) })} />
+                </div>
+                <div>
+                    <label>Input Name: </label>
+                    <input type="text" className="bg-gray-300 w-50" onChange={(e) => setSkill({ ...skill, name: e.target.value })} />
+                </div>
+                <button className="bg-blue-500 hover:bg-blue-700 text-white py-1 m-2 px-4 rounded-full" onClick={() => handleSkill(0)}>Add</button>
+                <button className="bg-red-500 hover:bg-red-700 text-white py-1 m-2 px-4 rounded-full" onClick={() => handleSkill(1)}>Delete</button>
             </div>
         </>
     )
